@@ -1216,7 +1216,13 @@
 
                 if (!this.alwaysShowCalendars)
                     this.hideCalendars();
-                this.clickApply();
+
+                // Intuiface change
+                // When click on custom range, don't close calendar and update view
+                this.setStartDate(this.startDate);
+                this.setEndDate(this.endDate);
+                this.updateView();
+                // this.clickApply();
             }
         },
 
