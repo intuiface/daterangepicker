@@ -26,6 +26,10 @@
         root.daterangepicker = factory(root.moment, root.jQuery);
     }
 }(this, function(moment, $) {
+
+    // Intuiface change
+    var clickedOnFixedRange = false;
+
     var DateRangePicker = function(element, options, cb) {
 
         //default settings for options
@@ -1205,8 +1209,20 @@
             var label = e.target.getAttribute('data-range-key');
             this.chosenLabel = label;
             if (label == this.locale.customRangeLabel) {
+                // Intuiface change
+                // Enable calendar view when user click on Fixed Range
+                clickedOnFixedRange = true;
+                $('.calendar-table').removeClass('calendar-disable');
+                $('.ranges > ul > .active').removeClass('active');
+                $('.ranges > ul > li:last-child').addClass('active');
+
                 this.showCalendars();
             } else {
+                // Intuiface change
+                // Disable calendar view when user click on custom range
+                clickedOnFixedRange = false;
+                $('.calendar-table').addClass('calendar-disable');
+
                 var dates = this.ranges[label];
                 this.startDate = dates[0];
                 this.endDate = dates[1];
@@ -1381,14 +1397,26 @@
                 if (this.timePicker) {
                     if (this.startDate.isSame(this.ranges[range][0]) && this.endDate.isSame(this.ranges[range][1])) {
                         customRange = false;
-                        this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
+                        // Intuiface change
+                        // Disable calendar view when user click on custom range
+                        if (!clickedOnFixedRange) {
+                            this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
+                            $('.calendar-table').addClass('calendar-disable');
+                        }
+
                         break;
                     }
                 } else {
                     //ignore times when comparing dates if time picker is not enabled
                     if (this.startDate.format('YYYY-MM-DD') == this.ranges[range][0].format('YYYY-MM-DD') && this.endDate.format('YYYY-MM-DD') == this.ranges[range][1].format('YYYY-MM-DD')) {
                         customRange = false;
-                        this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
+                        // Intuiface change
+                        // Disable calendar view when user click on custom range
+                        if (!clickedOnFixedRange) {
+                            this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
+                            $('.calendar-table').addClass('calendar-disable');
+                        }
+
                         break;
                     }
                 }
