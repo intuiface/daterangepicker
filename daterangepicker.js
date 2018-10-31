@@ -1193,8 +1193,10 @@
                 this.updateView();
             } else {
                 var dates = this.ranges[label];
-                this.container.find('input[name=daterangepicker_start]').val(dates[0].format(this.locale.format));
-                this.container.find('input[name=daterangepicker_end]').val(dates[1].format(this.locale.format));
+                // Intuiface change
+                // On shortcut hover, don't display text input date
+                // this.container.find('input[name=daterangepicker_start]').val(dates[0].format(this.locale.format));
+                // this.container.find('input[name=daterangepicker_end]').val(dates[1].format(this.locale.format));
             }
 
         },
