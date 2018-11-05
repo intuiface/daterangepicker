@@ -1194,7 +1194,9 @@
             var label = e.target.getAttribute('data-range-key');
 
             if (label == this.locale.customRangeLabel) {
-                this.updateView();
+                // Intuiface change
+                // Fix bug: select fixed range and hover other shortcut remove the focus
+                // this.updateView();
             } else {
                 var dates = this.ranges[label];
                 // Intuiface change
