@@ -115,12 +115,12 @@
                       '</div>' +
                     '</div>' +
                     '<div class="calendar-table"></div>' +
-                '</div>' +
-                '<div class="ranges">' +
                     '<div class="range_inputs">' +
                         '<button class="applyBtn" disabled="disabled" type="button"></button> ' +
                         '<button class="cancelBtn" type="button"></button>' +
                     '</div>' +
+                '</div>' +
+                '<div class="ranges">' +
                 '</div>' +
             '</div>';
 
