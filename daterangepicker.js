@@ -514,8 +514,8 @@
             if (this.timePicker && this.timePickerIncrement)
                 this.endDate.minute(Math.round(this.endDate.minute() / this.timePickerIncrement) * this.timePickerIncrement);
 
-            if (this.endDate.isBefore(this.startDate))
-                this.endDate = this.startDate.clone();
+            // if (this.endDate.isBefore(this.startDate))
+                // this.endDate = this.startDate.clone();
 
             if (this.maxDate && this.endDate.isAfter(this.maxDate))
                 this.endDate = this.maxDate.clone();
@@ -787,6 +787,17 @@
                 }
             }
 
+            // Intuiface change
+            // Behavior select start date > end date
+            let highlightStartDate = true;
+            let highlightEndDate = true;
+            if (this.selectEndDate) {
+                if (this.startDate != null && this.endDate != null) {
+                    if (this.startDate > this.endDate)
+                        highlightEndDate = false;
+                }
+            }
+
             for (var row = 0; row < 6; row++) {
                 html += '<tr>';
 
@@ -825,11 +836,11 @@
                         classes.push('off', 'disabled');
 
                     //highlight the currently selected start date
-                    if (calendar[row][col].format('YYYY-MM-DD') == this.startDate.format('YYYY-MM-DD'))
+                    if (calendar[row][col].format('YYYY-MM-DD') == this.startDate.format('YYYY-MM-DD') && highlightStartDate)
                         classes.push('active', 'start-date');
 
                     //highlight the currently selected end date
-                    if (this.endDate != null && calendar[row][col].format('YYYY-MM-DD') == this.endDate.format('YYYY-MM-DD'))
+                    if (this.endDate != null && calendar[row][col].format('YYYY-MM-DD') == this.endDate.format('YYYY-MM-DD') && highlightEndDate)
                         classes.push('active', 'end-date');
 
                     //highlight dates in-between the selected dates
@@ -1280,9 +1291,9 @@
             var cal = $(e.target).parents('.calendar');
             var date = cal.hasClass('left') ? this.leftCalendar.calendar[row][col] : this.rightCalendar.calendar[row][col];
 
-            if (this.endDate && !this.container.find('input[name=daterangepicker_start]').is(":focus")) {
+            if (!this.selectEndDate) {
                 this.container.find('input[name=daterangepicker_start]').val(date.format(this.locale.format));
-            } else if (!this.endDate && !this.container.find('input[name=daterangepicker_end]').is(":focus")) {
+            } else {
                 this.container.find('input[name=daterangepicker_end]').val(date.format(this.locale.format));
             }
 
@@ -1367,8 +1378,10 @@
                     var second = this.timePickerSeconds ? parseInt(this.container.find('.right .secondselect').val(), 10) : 0;
                     date = date.clone().hour(hour).minute(minute).second(second);
                 }
-                this.selectEndDate = false;
                 this.setEndDate(date.clone());
+                if (this.endDate < this.startDate)
+                    return;
+                this.selectEndDate = false;
                 if (this.autoApply) {
                   this.calculateChosenLabel();
                   this.clickApply();
