@@ -271,6 +271,10 @@
         if (typeof options.alwaysShowCalendars === 'boolean')
             this.alwaysShowCalendars = options.alwaysShowCalendars;
 
+        // Intuiface change
+        // Change to the start date shouldn't change the end date 
+        this.selectEndDate = false;
+
         // update day names order to firstDay
         if (this.locale.firstDay != 0) {
             var iterator = this.locale.firstDay;
@@ -545,7 +549,7 @@
                     this.container.find('.right .calendar-time select').removeAttr('disabled').removeClass('disabled');
                 }
             }
-            if (this.endDate) {
+            if (!this.selectEndDate) {
                 this.container.find('input[name="daterangepicker_end"]').removeClass('active');
                 this.container.find('input[name="daterangepicker_start"]').addClass('active');
             } else {
@@ -1328,7 +1332,7 @@
             // * if one of the inputs above the calendars was focused, cancel that manual input
             //
 
-            if (this.endDate || date.isBefore(this.startDate, 'day')) { //picking start
+            if (!this.selectEndDate) { //picking start
                 if (this.timePicker) {
                     var hour = parseInt(this.container.find('.left .hourselect').val(), 10);
                     if (!this.timePicker24Hour) {
@@ -1342,7 +1346,8 @@
                     var second = this.timePickerSeconds ? parseInt(this.container.find('.left .secondselect').val(), 10) : 0;
                     date = date.clone().hour(hour).minute(minute).second(second);
                 }
-                this.endDate = null;
+                // this.endDate = null;
+                this.selectEndDate = true;
                 this.setStartDate(date.clone());
             } else if (!this.endDate && date.isBefore(this.startDate)) {
                 //special case: clicking the same date for start/end,
@@ -1362,6 +1367,7 @@
                     var second = this.timePickerSeconds ? parseInt(this.container.find('.right .secondselect').val(), 10) : 0;
                     date = date.clone().hour(hour).minute(minute).second(second);
                 }
+                this.selectEndDate = false;
                 this.setEndDate(date.clone());
                 if (this.autoApply) {
                   this.calculateChosenLabel();
@@ -1551,9 +1557,13 @@
             // using the calendar.
             var isRight = $(e.target).closest('.calendar').hasClass('right');
             if (isRight) {
-                this.endDate = null;
-                this.setStartDate(this.startDate.clone());
-                this.updateView();
+                // this.endDate = null;
+                // this.setStartDate(this.startDate.clone());
+                // this.updateView();
+                this.selectEndDate = true;
+            }
+            else {
+                this.selectEndDate = false;
             }
 
         },
