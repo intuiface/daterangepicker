@@ -425,11 +425,17 @@
             .on('change.daterangepicker', '.daterangepicker_input input', $.proxy(this.formInputsChanged, this));
 
         this.container.find('.ranges')
-            .on('click.daterangepicker', 'button.applyBtn', $.proxy(this.clickApply, this))
-            .on('click.daterangepicker', 'button.cancelBtn', $.proxy(this.clickCancel, this))
+            // .on('click.daterangepicker', 'button.applyBtn', $.proxy(this.clickApply, this))
+            // .on('click.daterangepicker', 'button.cancelBtn', $.proxy(this.clickCancel, this))
             .on('click.daterangepicker', 'li', $.proxy(this.clickRange, this))
             .on('mouseenter.daterangepicker', 'li', $.proxy(this.hoverRange, this))
             .on('mouseleave.daterangepicker', 'li', $.proxy(this.updateFormInputs, this));
+
+        // Intuiface change
+        // Make sure the apply button works if it's positioned right of the calendar
+        this.container.find('.range_inputs')
+            .on('click.daterangepicker', 'button.applyBtn', $.proxy(this.clickApply, this))
+            .on('click.daterangepicker', 'button.cancelBtn', $.proxy(this.clickCancel, this))
 
         if (this.element.is('input') || this.element.is('button')) {
             this.element.on({
