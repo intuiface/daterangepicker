@@ -793,7 +793,7 @@
             let highlightEndDate = true;
             if (this.selectEndDate) {
                 if (this.startDate != null && this.endDate != null) {
-                    if (this.startDate > this.endDate)
+                    if (this.startDate > this.endDate || moment(this.startDate).isSame(this.endDate, 'day'))
                         highlightEndDate = false;
                 }
             }
@@ -1379,12 +1379,19 @@
                     date = date.clone().hour(hour).minute(minute).second(second);
                 }
                 this.setEndDate(date.clone());
-                if (this.endDate < this.startDate)
-                    return;
-                this.selectEndDate = false;
-                if (this.autoApply) {
-                  this.calculateChosenLabel();
-                  this.clickApply();
+                // Intuiface change
+                // If select an end date inferior to the start date, then it becomes the start date
+                if (this.endDate < this.startDate) {
+                    this.selectEndDate = true;
+                    this.setStartDate(date.clone());
+                }
+                else {
+                    this.selectEndDate = false;
+                    if (this.autoApply) {
+                      this.calculateChosenLabel();
+                      this.clickApply();
+                    }
+
                 }
             }
 
