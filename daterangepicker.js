@@ -275,6 +275,11 @@
         // Change to the start date shouldn't change the end date 
         this.selectEndDate = false;
 
+        // Allow to highlight fixed range every time the user clicked on a date (even if the selected date is the same as a custom range)
+        this.clickedOnDate = false;
+        // Allow to highlight fixed range when user open the calendar if the input value is equal to 'Fixed Range'
+        this.openCalendar = false;
+
         // update day names order to firstDay
         if (this.locale.firstDay != 0) {
             var iterator = this.locale.firstDay;
@@ -628,9 +633,13 @@
 
             //highlight any predefined range matching the current start and end dates
             this.container.find('.ranges li').removeClass('active');
+
             if (this.endDate == null) return;
 
-            this.calculateChosenLabel();
+            if (!this.clickedOnDate)
+                this.calculateChosenLabel();
+            else
+                this.container.find('.ranges li:last').addClass('active');
         },
 
         renderCalendar: function(side) {
@@ -1117,6 +1126,7 @@
 
         show: function(e) {
             if (this.isShowing) return;
+            this.openCalendar = true;
 
             // Create a click proxy that is private to this instance of datepicker, for unbinding
             this._outsideClickProxy = $.proxy(function(e) { this.outsideClick(e); }, this);
@@ -1147,6 +1157,7 @@
 
         hide: function(e) {
             if (!this.isShowing) return;
+            this.openCalendar = false;
 
             //incomplete date selection, revert to last values
             if (!this.endDate) {
@@ -1225,6 +1236,8 @@
         },
 
         clickRange: function(e) {
+            this.clickedOnDate = false;
+
             var label = e.target.getAttribute('data-range-key');
             this.chosenLabel = label;
             if (label == this.locale.customRangeLabel) {
@@ -1328,6 +1341,9 @@
 
             if (!$(e.target).hasClass('available')) return;
 
+            this.clickedOnDate = true;
+            this.chosenLabel = this.container.find('.ranges li:last').addClass('active').html();
+
             var title = $(e.target).attr('data-title');
             var row = title.substr(1, 1);
             var col = title.substr(3, 1);
@@ -1409,32 +1425,39 @@
         },
 
         calculateChosenLabel: function () {
-            var customRange = true;
-            var i = 0;
-            for (var range in this.ranges) {
-                if (this.timePicker) {
-                    if (this.startDate.isSame(this.ranges[range][0]) && this.endDate.isSame(this.ranges[range][1])) {
-                        customRange = false;
-                        this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
-                        break;
-                    }
-                } else {
-                    //ignore times when comparing dates if time picker is not enabled
-                    if (this.startDate.format('YYYY-MM-DD') == this.ranges[range][0].format('YYYY-MM-DD') && this.endDate.format('YYYY-MM-DD') == this.ranges[range][1].format('YYYY-MM-DD')) {
-                        customRange = false;
-                        this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
-                        break;
-                    }
-                }
-                i++;
+            // If user has opened the calendar, focus on fixed range if the input contain it
+            if (this.element[0].value.substring(0,11) == 'Fixed Range' && this.openCalendar) {
+                this.chosenLabel = this.container.find('.ranges li:last').addClass('active').html();
+                this.openCalendar = false;
             }
-            if (customRange) {
-                if (this.showCustomRangeLabel) {
-                    this.chosenLabel = this.container.find('.ranges li:last').addClass('active').html();
-                } else {
-                    this.chosenLabel = null;
+            else {
+                var customRange = true;
+                var i = 0;
+                for (var range in this.ranges) {
+                    if (this.timePicker) {
+                        if (this.startDate.isSame(this.ranges[range][0]) && this.endDate.isSame(this.ranges[range][1])) {
+                            customRange = false;
+                            this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
+                            break;
+                        }
+                    } else {
+                        //ignore times when comparing dates if time picker is not enabled
+                        if (this.startDate.format('YYYY-MM-DD') == this.ranges[range][0].format('YYYY-MM-DD') && this.endDate.format('YYYY-MM-DD') == this.ranges[range][1].format('YYYY-MM-DD')) {
+                            customRange = false;
+                            this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
+                            break;
+                        }
+                    }
+                    i++;
                 }
-                this.showCalendars();
+                if (customRange) {
+                    if (this.showCustomRangeLabel) {
+                        this.chosenLabel = this.container.find('.ranges li:last').addClass('active').html();
+                    } else {
+                        this.chosenLabel = null;
+                    }
+                    this.showCalendars();
+                }
             }
         },
 
