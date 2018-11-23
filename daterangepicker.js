@@ -638,8 +638,10 @@
 
             if (!this.clickedOnDate)
                 this.calculateChosenLabel();
-            else
+            else {
                 this.container.find('.ranges li:last').addClass('active');
+                this.openCalendar = false;
+            }
         },
 
         renderCalendar: function(side) {
