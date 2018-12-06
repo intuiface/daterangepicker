@@ -851,8 +851,19 @@
                         classes.push('active', 'start-date');
 
                     //highlight the currently selected end date
-                    if (this.endDate != null && calendar[row][col].format('YYYY-MM-DD') == this.endDate.format('YYYY-MM-DD') && highlightEndDate)
-                        classes.push('active', 'end-date');
+                    // Intuiface change: don't display end date twice
+                    if (this.endDate != null && calendar[row][col].format('YYYY-MM-DD') == this.endDate.format('YYYY-MM-DD') && highlightEndDate) {
+                        if (side == 'right') {
+                            if (row > 0 || (row == 0 && calendar[row][col].date() < 20)) {
+                                classes.push('active', 'end-date');
+                            }
+                        }
+                        else {
+                            if (row < 3 || (row > 1 && calendar[row][col].date() > 14)) {
+                                classes.push('active', 'end-date');
+                            }
+                        }
+                    }
 
                     //highlight dates in-between the selected dates
                     // if (this.endDate != null && calendar[row][col] > this.startDate && calendar[row][col] < this.endDate)
