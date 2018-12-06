@@ -855,8 +855,24 @@
                         classes.push('active', 'end-date');
 
                     //highlight dates in-between the selected dates
-                    if (this.endDate != null && calendar[row][col] > this.startDate && calendar[row][col] < this.endDate)
-                        classes.push('in-range');
+                    // if (this.endDate != null && calendar[row][col] > this.startDate && calendar[row][col] < this.endDate)
+                        // classes.push('in-range');
+                    // Intuiface change: range class is added one too much
+                    if (Array.isArray(this.endDate._i)) {
+                        if (this.endDate != null && calendar[row][col] > this.startDate && calendar[row][col] < this.endDate)
+                            classes.push('in-range');
+                    }
+                    else {
+                        // Click on shortcut range
+                        if (this.endDate._i == undefined) {
+                            if (this.endDate != null && calendar[row][col] > this.startDate && calendar[row][col].format() < this.endDate.format())
+                                classes.push('in-range');
+                        }
+                        else {
+                            if (this.endDate != null && calendar[row][col] > this.startDate && calendar[row][col].format() < this.endDate._i)
+                                classes.push('in-range');
+                        }
+                    }
 
                     //apply custom classes for this date
                     var isCustom = this.isCustomDate(calendar[row][col]);
